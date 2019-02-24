@@ -1,0 +1,952 @@
+case Dialogo_Registro:
+	{
+	if(response)
+	{
+                if(!strlen(inputtext)) return ShowPlayerDialog(playerid, Dialogo_Registro, DIALOG_STYLE_INPUT, "Fallo en el registro","Por favor ingrese su contraseña nuevamente","Sigueinte","Cancelar");
+                DarDinero(playerid,1000);
+                GetPlayerPos(playerid,Info[playerid][px],Info[playerid][py],Info[playerid][pz]);
+				RegistrarJugador(playerid,inputtext);
+				ChaoTexto(playerid);
+	 }
+	 else
+	 {
+	 	Kick(playerid);
+	 }
+	}
+	case Dialogo_Logueo:
+ 	{
+            if ( !response ) return Kick ( playerid );
+            if( response )
+            {
+                if(strcmp(inputtext, Info[playerid][pLlave], true) == 0)
+                {
+                    INI_ParseFile(UsuCuenta(playerid), "Cargar_data", .bExtra = true, .extra = playerid);
+                    IngresarInfo(playerid);
+                    ChaoTexto(playerid);
+                 }
+                else
+                {
+                    ShowPlayerDialog(playerid, Dialogo_Logueo, DIALOG_STYLE_INPUT,"Fallo en el ingreso","Por favor ingrese su contraseña nuevamente","Ingresar","Cancelar");
+                }
+                return 1;
+            }
+  	}
+	case Dialogo_Sexo:
+	{
+		if(response)
+		{
+			switch(listitem)
+			{
+				case 0: {SetTimerEx("ElecEdad",2500,false,"i",playerid); Info[playerid][pSex] = 0;}
+				case 1: {SetTimerEx("ElecEdad",2500,false,"i",playerid); Info[playerid][pSex] = 1;}
+			}
+		}
+	}
+	case D_PASARNIVEL:
+	{
+	    if(response)
+	    {
+	        Info[playerid][pLevel] ++;
+	        Info[playerid][pLevelExp] = 0;
+			SendClientMessage(playerid,Color_Blanco,"Felicidades acabas de subir de nivel");
+		}
+	}
+	case Dialog_dAdmin:
+	{
+		if(response)
+		{
+			new id = strval(inputtext);
+			if(!IsPlayerConnected(id))return SendClientMessage(playerid,Color_Bot,"ID Invalida");
+			aID[id] = id;
+			ShowPlayerDialog(playerid,Dialogo_dAdmin2,DIALOG_STYLE_INPUT,"Dar Administrador","Ahora ingresa el nivel administrativo","Aceptar","Salir");
+		}
+	}
+	case Dialogo_Ban:
+	{
+		if(response)
+		{
+			switch(listitem)
+			{
+				case 0:{Opcion[playerid] = 1; ShowPlayerDialog(playerid,Dialogo_Ban2,DIALOG_STYLE_INPUT,"Ingresa una ID","Ingresa Una ID para banear","Aceptar","Salir");}
+				case 1:{Opcion[playerid] = 2; ShowPlayerDialog(playerid,Dialogo_Ban2,DIALOG_STYLE_INPUT,"Ingresa una ID","Ingresa Una ID para banear","Aceptar","Salir");}
+				case 2:{Opcion[playerid] = 3; ShowPlayerDialog(playerid,Dialogo_Ban2,DIALOG_STYLE_INPUT,"Ingresa una ID","Ingresa Una ID para banear","Aceptar","Salir");}
+				case 3:{Opcion[playerid] = 4; ShowPlayerDialog(playerid,Dialogo_BanSt,DIALOG_STYLE_INPUT,"Ingresa porque lo banearas","Ingresa la razon del baneo","Aceptar","Salir");}
+			}
+		}
+	}
+	case Dialogo_Ban2:
+	{
+		if(response)
+		{
+			new id = strval(inputtext);
+			new string[250],Name[MAX_PLAYER_NAME],pName[MAX_PLAYER_NAME]; GetPlayerName(playerid,Name,sizeof(Name)); GetPlayerName(id,pName,sizeof(pName));
+			switch(Opcion[playerid])
+			{
+				case 1:
+				{
+					format(string,sizeof(string),"%s a baneado por ser un niño rata a %s",Name,pName);
+					SendClientMessageToAll(Color_Bot,string);
+				}
+				case 2:
+				{
+					format(string,sizeof(string),"%s a baneado por Molestar a otros usuarios a %s",Name,pName);
+					SendClientMessageToAll(Color_Bot,string);
+				}
+				case 3:
+				{
+					format(string,sizeof(string),"%s a baneado por ser un Hacker a %s",Name,pName);
+					SendClientMessageToAll(Color_Bot,string);
+				}
+				case 4:
+				{
+					format(string,sizeof(string),"%s a baneado por %s a %s",Name,BanS,pName);
+					SendClientMessageToAll(Color_Bot,string);
+				}
+			}
+			if(!IsPlayerConnected(id))return SendClientMessage(playerid,Color_Blanco,"ID Invalida");
+			Info[id][pBan] = 1;
+			SetTimerEx("Kickeado",1000,false,"i",id);
+		}
+	}
+	case Dialogo_BanSt:
+	{
+		if(response)
+		{
+			new S = strval(inputtext);
+			format(BanS,sizeof(BanS),"%s",S);
+			ShowPlayerDialog(playerid,Dialogo_Ban2,DIALOG_STYLE_INPUT,"Ingresa una ID","Ingresa Una ID para banear","Aceptar","Salir");
+		}
+	}
+	case Dialogo_dAdmin2:
+	{
+		new string[250],Name[MAX_PLAYER_NAME],pName[MAX_PLAYER_NAME],s[250];GetPlayerName(playerid,Name,sizeof(Name));GetPlayerName(aID[playerid],pName,sizeof(pName));
+		if(response)
+		{
+			new n = strval(inputtext);
+			switch(n)
+			{
+				case 1:s = "Ayudante";
+				case 2:s = "Super Ayudante";
+				case 3:s = "Moderador";
+				case 4:s = "Super Moderador";
+				case 5:s = "Administrador";
+				case 6:s = "Administrador General";
+				case 7:s = "Administrador a cargo";
+				case 8:s = "Super Administrador";
+				case 9:s = "Sub Fundador";
+				case 10:s = "Fundador";
+				default: return SendClientMessage(playerid,Color_Bot,"ID Invalida");
+			}
+			Info[aID[playerid]][pAdmin] = n;
+			format(string,sizeof(string),"%s le dio a %s el rango de %s",Name,pName,s);
+			SendClientMessageToAll(Color_Bot,string);
+		}
+	}
+	case Dialogo_Edad:
+	{
+		if(response)
+		{
+			new ed = strval(inputtext);
+			if(ed < 0 || ed > 99) return ShowPlayerDialog(playerid,Dialogo_Edad,DIALOG_STYLE_INPUT,"Elige Tu edad","Ingresa tu edad tiene que ser mayor que 0 o menor que 99","Elegir","");
+			Info[playerid][pEdad] = ed;
+			SetTimerEx("ColocarJ",2500,false,"i",playerid);
+		}
+	}
+    case DIALOG_CDBUY:
+	{
+		new string[250];
+	    // Account Eating Bug Fix
+		if(!IsPlayerInAnyVehicle(playerid))
+		{
+		    TogglePlayerControllable(playerid, 1);
+			SendClientMessage(playerid,Color_Blanco,"Necesitas estar en el vehículo que desea comprar.");
+			return 1;
+		}
+
+		new vehicleid = GetPlayerVehicleID(playerid);
+		new v = GetCarDealershipVehicleId(vehicleid);
+		new d = GetCarDealershipId(vehicleid);
+		if(response)
+		{
+		    if(carsforplayer[playerid] == 2) return SendClientMessage(playerid,Color_Blanco,"* Tienes 2 coches liberados, primero guarda uno para comprar otro.");
+            if(CDSInfo[d][cdVehicleSpawn][0] == 0.0 && CDSInfo[d][cdVehicleSpawn][1] == 0.0 && CDSInfo[d][cdVehicleSpawn][2] == 0.0)
+            {
+				SendClientMessage(playerid, Color_Blanco, "ERROR: El propietario de este Concesionario no ha configurado completamente los puntos de spawn de coches.");
+				RemovePlayerFromVehicle(playerid);
+				new Float:slx, Float:sly, Float:slz;
+				GetPlayerPos(playerid, slx, sly, slz);
+				SetPlayerPos(playerid, slx, sly, slz+1.2);
+				TogglePlayerControllable(playerid, 1);
+				return 1;
+            }
+            new playervehicleid = GetPlayerFreeVehicleId(playerid);
+            new carsamount = VehicleCount(playerid);
+            if((Info[playerid][pVIP] == 0) && carsamount >= 2)
+			{
+                SendClientMessage(playerid, Color_Blanco, "ERROR: No puedes tener más coches, usuarios normales sólo pueden tener 2 coches.");
+                RemovePlayerFromVehicle(playerid);
+                new Float:slx, Float:sly, Float:slz;
+				GetPlayerPos(playerid, slx, sly, slz);
+				SetPlayerPos(playerid, slx, sly, slz+1.2);
+                TogglePlayerControllable(playerid, 1);
+                return 1;
+			}
+            if(Info[playerid][pVIP] == 1 && carsamount >= 4)
+            {
+                SendClientMessage(playerid, Color_Blanco, "ERROR: No puedes tener más coches, BVIP Sólo puede tener 4 coches.");
+                RemovePlayerFromVehicle(playerid);
+                new Float:slx, Float:sly, Float:slz;
+				GetPlayerPos(playerid, slx, sly, slz);
+				SetPlayerPos(playerid, slx, sly, slz+1.2);
+                TogglePlayerControllable(playerid, 1);
+                return 1;
+            }
+            if(Info[playerid][pVIP] == 2 && carsamount >= 5)
+            {
+                SendClientMessage(playerid, Color_Blanco, "ERROR: No puedes tener más coches, SVIP Sólo puede tener 5 coches.");
+                RemovePlayerFromVehicle(playerid);
+                new Float:slx, Float:sly, Float:slz;
+				GetPlayerPos(playerid, slx, sly, slz);
+				SetPlayerPos(playerid, slx, sly, slz+1.2);
+                TogglePlayerControllable(playerid, 1);
+                return 1;
+            }
+            if(Info[playerid][pVIP] == 3 && carsamount >= 7)
+            {
+                SendClientMessage(playerid, Color_Blanco, "ERROR: No puedes tener más coches, GVIP Sólo puede tener 7 coches.");
+                RemovePlayerFromVehicle(playerid);
+                new Float:slx, Float:sly, Float:slz;
+				GetPlayerPos(playerid, slx, sly, slz);
+				SetPlayerPos(playerid, slx, sly, slz+1.2);
+                TogglePlayerControllable(playerid, 1);
+                return 1;
+            }
+            if(Info[playerid][pVIP] == 4 && carsamount >= 8)
+            {
+                SendClientMessage(playerid, Color_Blanco, "ERROR: No puedes tener más coches, PVIP Sólo puede tener 8 coches.");
+                RemovePlayerFromVehicle(playerid);
+                new Float:slx, Float:sly, Float:slz;
+				GetPlayerPos(playerid, slx, sly, slz);
+				SetPlayerPos(playerid, slx, sly, slz+1.2);
+                TogglePlayerControllable(playerid, 1);
+                return 1;
+            }
+		    if(playervehicleid == -1)
+		    {
+		        SendClientMessage(playerid, Color_Blanco, "ERROR: Este jugador no puede tener más coches.");
+                RemovePlayerFromVehicle(playerid);
+                new Float:slx, Float:sly, Float:slz;
+				GetPlayerPos(playerid, slx, sly, slz);
+				SetPlayerPos(playerid, slx, sly, slz+1.2);
+                TogglePlayerControllable(playerid, 1);
+                return 1;
+		    }
+		    new randcolor1 = Random(0, 126);
+		    new randcolor2 = Random(0, 126);
+		    TogglePlayerControllable(playerid, 1);
+		    new cost;
+		    if(Info[playerid][pVIP] < 1)
+            {
+                cost = CDSInfo[d][cdVehicleCost][v];
+	            if(GetPVarInt(playerid, "Cash") < CDSInfo[d][cdVehicleCost][v])
+	            {
+					SendClientMessage(playerid, Color_Blanco, "ERROR: No tienes dinero suficiente para comprar este coche.");
+					RemovePlayerFromVehicle(playerid);
+					new Float:slx, Float:sly, Float:slz;
+					GetPlayerPos(playerid, slx, sly, slz);
+					SetPlayerPos(playerid, slx, sly, slz+1.2);
+					return 1;
+	            }
+                format(string, sizeof(string), " Gracias por comprar en %s.", CDSInfo[d][cdMessage]);
+		        SendClientMessage(playerid, Color_Blanco, string);
+		        SetPVarInt(playerid, "Cash", GetPVarInt(playerid, "Cash")-CDSInfo[d][cdVehicleCost][v]);
+		        CDSInfo[d][cdTill] += ( CDSInfo[d][cdVehicleCost][v] * 40 ) / ( 100 );
+	        }
+	        else
+	        {
+				cost = ( CDSInfo[d][cdVehicleCost][v] * 80 ) / ( 100 );
+	            if(GetPVarInt(playerid, "Cash") < cost)
+	            {
+					SendClientMessage(playerid, Color_Blanco, "ERROR: No tienes dinero suficiente para comprar este coche.");
+					RemovePlayerFromVehicle(playerid);
+					new Float:slx, Float:sly, Float:slz;
+					GetPlayerPos(playerid, slx, sly, slz);
+					SetPlayerPos(playerid, slx, sly, slz+1.2);
+					return 1;
+	            }
+
+                format(string, sizeof(string), " Gracias por comprar en %s.", CDSInfo[d][cdMessage]);
+		        SendClientMessage(playerid, Color_Blanco, string);
+		        SetPVarInt(playerid, "Cash", GetPVarInt(playerid, "Cash") - cost );
+				CDSInfo[d][cdTill] += cost;
+     		}
+            CreatePlayerVehicle(playerid, playervehicleid, CDSInfo[d][cdVehicleModel][v], CDSInfo[d][cdVehicleSpawn][0], CDSInfo[d][cdVehicleSpawn][1], CDSInfo[d][cdVehicleSpawn][2], CDSInfo[d][cdVehicleSpawn][3], randcolor1, randcolor2, cost);
+            SetPlayerPos(playerid, CDSInfo[d][cdVehicleSpawn][0], CDSInfo[d][cdVehicleSpawn][1], CDSInfo[d][cdVehicleSpawn][2]+2);
+			/*SetTimerEx("PutPlayerInVeh", 2000, 0, "dd", playerid, car);
+            SavecDealership(d);*/
+		}
+		else
+		{
+            RemovePlayerFromVehicle(playerid);
+            new Float:slx, Float:sly, Float:slz;
+			GetPlayerPos(playerid, slx, sly, slz);
+			SetPlayerPos(playerid, slx, sly, slz+1.2);
+            TogglePlayerControllable(playerid, 1);
+			return 1;
+		}
+	}
+	case DIALOG_CDEDIT:
+	{ // Concesionario dialog
+		new string[250];
+		if(response && GetPVarInt(playerid, "editingcd") != -1)
+		{
+            if(listitem == 0) // New Vehicle
+			{
+				format(string, sizeof(string),"Por favor, escriba la identificación del modelo del nuevo vehículo.");
+		        ShowPlayerDialog(playerid,DIALOG_CDNEWVEH,DIALOG_STYLE_INPUT,"Advertencia:",string,"Ok","Cancelar");
+			}
+			else if(listitem == 1) // My Vehicles
+			{
+				new vehicles;
+                for(new i=0; i<MAX_DEALERSHIPVEHICLES; i++)
+	            {
+					if(CDSInfo[GetPVarInt(playerid, "editingcd")][cdVehicleModel][i] != 0)
+					{
+						vehicles++;
+		                format(string, sizeof(string), "Vehiculo %d| Nombre: %s | Precio: %d.",i+1,GetVehicleName(CDSInfo[GetPVarInt(playerid, "editingcd")][cdVehicleId][i]),CDSInfo[GetPVarInt(playerid, "editingcd")][cdVehicleCost][i]);
+		                SendClientMessage(playerid, Color_Blanco, string);
+					}
+				}
+				if(vehicles)
+				{
+				    ShowPlayerDialog(playerid, DIALOG_CDEDITCARS, DIALOG_STYLE_INPUT, "Concesionario:", " Elija un vehículo para editar:", "Editar", "Atrás");
+				}
+				else
+				{
+					SendClientMessage(playerid, Color_Blanco, " Este Concesionario no tiene ningún coche.");
+				}
+			}
+			else if(listitem == 2) // Upgrade
+			{
+				new listitems[] = "1 Vehicle Spawn\n2 Radio\n3 Nombre del Negocio";
+			    ShowPlayerDialog(playerid,DIALOG_CDUPGRADE,DIALOG_STYLE_LIST,"Elige y continua.", listitems,"Ok","Cancelar");
+			}
+			else if(listitem == 3) // Till
+			{
+				new listitems[] = "1 Retirar\n2 Depositar";
+			    ShowPlayerDialog(playerid,DIALOG_CDTILL,DIALOG_STYLE_LIST,"Elige y continua.", listitems,"Ok","Cancelar");
+			}
+		}
+		else
+		{
+			SavecDealership(GetPVarInt(playerid, "editingcd"));
+            SetPVarInt(playerid, "editingcd", -1);
+		}
+	}
+	case DIALOG_CDTILL:
+	{ // Concesionario dialog
+		new string[250];
+	    if(response && GetPVarInt(playerid, "editingcd") != -1)
+		{
+            if(listitem == 0) // Withdraw
+			{
+				format(string, sizeof(string), "Tienes $%d en la cuenta de tu caja.\n\n\tCuanto deseas retirar?", CDSInfo[GetPVarInt(playerid, "editingcd")][cdTill]);
+				ShowPlayerDialog(playerid,DIALOG_CDWITHDRAW,DIALOG_STYLE_INPUT,"Retirar", string,"Ok","Cancelar");
+			}
+			else if(listitem == 1) // Deposit
+			{
+				format(string, sizeof(string), "Tienes $%d en la cuenta de tu caja.\n\n\tCuanto deseas depositar?", CDSInfo[GetPVarInt(playerid, "editingcd")][cdTill]);
+				ShowPlayerDialog(playerid,DIALOG_CDDEPOSIT,DIALOG_STYLE_INPUT,"Depositar", string,"Ok","Cancelar");
+			}
+		}
+		else
+		{
+            SavecDealership(GetPVarInt(playerid, "editingcd"));
+            SetPVarInt(playerid, "editingcd", -1);
+		}
+	}
+	case DIALOG_CDWITHDRAW:
+	{ // Concesionario dialog
+		new string[250];
+		if(response && GetPVarInt(playerid, "editingcd") != -1)
+		{
+		    if (isnumeric(inputtext))
+	        {
+	             new money = strval(inputtext);
+	             if(CDSInfo[GetPVarInt(playerid, "editingcd")][cdTill] < money)
+	             {
+                     format(string, sizeof(string), "No tienes ese dinero en tu caja!\n\nTienes $%d en tu caja.\n\n\tCuanto dinero quieres retirar?", CDSInfo[GetPVarInt(playerid, "editingcd")][cdTill]);
+				     ShowPlayerDialog(playerid,DIALOG_CDWITHDRAW,DIALOG_STYLE_INPUT,"Retirar", string,"Ok","Cancelar");
+                     return 1;
+	             }
+	             CDSInfo[GetPVarInt(playerid, "editingcd")][cdTill] -= money;
+	             SetPVarInt(playerid, "Cash", GetPVarInt(playerid, "Cash")+money);
+	             format(string, sizeof(string), "Retiraste $%d de tu caja, nuevo balance: $%d", money, CDSInfo[GetPVarInt(playerid, "editingcd")][cdTill]);
+	             SendClientMessage(playerid, Color_Blanco, string);
+	             SavecDealership(GetPVarInt(playerid, "editingcd"));
+                 SetPVarInt(playerid, "editingcd", -1);
+			}
+        }
+		else
+		{
+             SavecDealership(GetPVarInt(playerid, "editingcd"));
+             SetPVarInt(playerid, "editingcd", -1);
+		}
+	}
+	case DIALOG_CDSELL:
+	{
+		new string[250];
+		if(response)
+		{
+			if(GetPVarInt(playerid, "editingcd") == -1) return 1;
+            SetPVarInt(playerid, "Cash", GetPVarInt(playerid, "Cash")+ (CDSInfo[GetPVarInt(playerid, "editingcd")][cdPrice] / 2));
+			SellCarDealership(GetPVarInt(playerid, "editingcd"));
+			format(string, sizeof(string), "Concesionario de coches vendido con éxito por %d.", CDSInfo[GetPVarInt(playerid, "editingcd")][cdPrice] / 2);
+			SendClientMessage(playerid, Color_Blanco, string);
+		}
+		else
+		{
+            SetPVarInt(playerid, "editingcd", -1);
+			return 1;
+		}
+	}
+	case DIALOG_CDDEPOSIT:
+	{ // Concesionario dialog
+		new string[250];
+		if(response && GetPVarInt(playerid, "editingcd") != -1)
+		{
+		    if (isnumeric(inputtext))
+	        {
+	             new money = strval(inputtext);
+	             if(GetPVarInt(playerid, "Cash") < money)
+	             {
+                     format(string, sizeof(string), "No tienes el dinero especificado!\n\nTienes $%d en tu caja.\n\n\tCuanto dinero quieres depositar?", CDSInfo[GetPVarInt(playerid, "editingcd")][cdTill]);
+				     ShowPlayerDialog(playerid,DIALOG_CDDEPOSIT,DIALOG_STYLE_INPUT,"Deposit", string,"Select","Cancel");
+                     return 1;
+	             }
+	             CDSInfo[GetPVarInt(playerid, "editingcd")][cdTill] += money;
+	             SetPVarInt(playerid, "Cash", GetPVarInt(playerid, "Cash")-money);
+	             format(string, sizeof(string), "Depositaste $%d a tu caja, Nuevo Balance: $%d", money, CDSInfo[GetPVarInt(playerid, "editingcd")][cdTill]);
+	             SendClientMessage(playerid, Color_Blanco, string);
+	             SavecDealership(GetPVarInt(playerid, "editingcd"));
+                 SetPVarInt(playerid, "editingcd", -1);
+			}
+		}
+		else
+		{
+             SavecDealership(GetPVarInt(playerid, "editingcd"));
+             SetPVarInt(playerid, "editingcd", -1);
+		}
+	}
+	case DIALOG_CDNEWVEH:
+	{ // Concesionario dialog
+		if(response && GetPVarInt(playerid, "editingcd") != -1)
+		{
+			new modelid, d;
+			new Float: x, Float: y, Float: z, Float: a;
+			new text_info[128];
+			d = GetPVarInt(playerid, "editingcd");
+			GetPlayerPos(playerid,x,y,z);
+	        GetPlayerFacingAngle(playerid, a);
+	        if (!isnumeric(inputtext)) return SendClientMessage(playerid, Color_Blanco, "ERROR: El modelo debe ser números.");
+            if (IsPlayerInRangeOfPoint(playerid, CDSInfo[d][cdRadius], CDSInfo[d][cdEntranceX], CDSInfo[d][cdEntranceY], CDSInfo[d][cdEntranceZ]))
+	        {
+	             modelid = strval(inputtext);
+	             if(modelid < 400 || modelid > 611) { SendClientMessage(playerid, Color_Blanco, "   ID´s: No menor de 400 y no mayor de 611 !"); return 1; }
+	             new cdvehicleid = CreateCarDealershipVehicle(d, modelid, x, y, z, a, 1337);
+	             if(cdvehicleid == -1)
+		         {
+		             SendClientMessage(playerid, Color_Blanco, "ERROR: El coche no se puede crear.");
+		         }
+	             else
+	             {
+					 PutPlayerInVehicle(playerid, CDSInfo[d][cdVehicleId][cdvehicleid], 0);
+                     format(text_info, sizeof(text_info), " Vehículo de Concesionario creado con la ID %d.", cdvehicleid-1);
+		             SendClientMessage(playerid, Color_Blanco, text_info);
+		             SendClientMessage(playerid, Color_Blanco, " Por favor, ponte donde quieres añadir tu nuevo vehículo.");
+				     SendClientMessage(playerid, Color_Blanco, " Una vez listo, presiona el botón FIRE - DISPARAR (CLICK).");
+				     SetPVarInt(playerid, "editingcdvehnew", 1);
+		             SetPVarInt(playerid, "editingcdveh", cdvehicleid);
+	             }
+	        }
+	        else
+	        {
+                 SendClientMessage(playerid, Color_Blanco, "ERROR: Estas fuera del radio del Concesionario, por favor vuelve a intentarlo.");
+                 TogglePlayerControllable(playerid, true);
+	        }
+		}
+		else
+		{
+            TogglePlayerControllable(playerid, true);
+			SetPVarInt(playerid, "editingcd", -1);
+		}
+	}
+	case DIALOG_CDEDITCARS:
+	{ // Concesionario dialog
+		if(response && GetPVarInt(playerid, "editingcd") != -1)
+		{
+			new cdvid;
+            if (isnumeric(inputtext))
+	        {
+	             cdvid = strval(inputtext);
+	             if(CDSInfo[GetPVarInt(playerid, "editingcd")][cdVehicleModel][cdvid-1])
+	             {
+	                 SetPVarInt(playerid, "editingcdveh", cdvid-1);
+	                 new listitems[] = "1 Editar Modelo\n2 Editar Costo\n3 Editar Park\n4 Borrar Vehiculo";
+			         ShowPlayerDialog(playerid,DIALOG_CDEDITONE,DIALOG_STYLE_LIST,"Concesionario:", listitems,"Ok","Cancelar");
+				 }
+	        }
+		}
+		else
+		{
+		    new listitems[] = "1 Nuevo Coche\n2 Mis Coches\n3 Mejorar\n4 Ganancias";
+			ShowPlayerDialog(playerid,DIALOG_CDEDIT,DIALOG_STYLE_LIST,"Elige y Continua", listitems,"Ok","Cancelar");
+		}
+	}
+	case DIALOG_CDUPGRADE:
+	{ // Concesionario dialog
+		if(response && GetPVarInt(playerid, "editingcd") != -1)
+		{
+            if(listitem == 0) // Vehicle Spawn
+			{
+		        SendClientMessage(playerid, Color_Blanco, " Por favor, ponte donde quieres que este el vehiculo para la venta.");
+				SendClientMessage(playerid, Color_Blanco, " Una vez listo, presiona el botón FIRE - DISPARAR (CLICK).");
+				SetPVarInt(playerid, "editingcdvehpos", 2);
+			}
+            if(listitem == 1) // Radius
+			{
+				ShowPlayerDialog(playerid, DIALOG_CDRADIUS, DIALOG_STYLE_INPUT, "Concesionario:", " Elige el nuevo Radio:", "Editar", "Atrás");
+			}
+			else if(listitem == 2) // Dealership Name
+			{
+				ShowPlayerDialog(playerid, DIALOG_CDNAME, DIALOG_STYLE_INPUT, "Concesionario:", " Elige el nuevo Nombre:", "Editar", "Atrás");
+			}
+			/*else if(listitem == 3) // Price
+			{
+				ShowPlayerDialog(playerid, DIALOG_CDPRICE, DIALOG_STYLE_INPUT, "Concesionario:", " Elige el nuevo precio:", "Editar", "Atrás");
+			}*/
+		}
+		else
+		{
+            SavecDealership(GetPVarInt(playerid, "editingcd"));
+            SetPVarInt(playerid, "editingcd", -1);
+		}
+	}
+	case DIALOG_CDEDITONE:
+	{ // Concesionario dialog
+		new string[250];
+		if(response && GetPVarInt(playerid, "editingcd") != -1 && GetPVarInt(playerid, "editingcdveh") != -1)
+		{
+            if(listitem == 0) // Edit Model
+			{
+	             ShowPlayerDialog(playerid, DIALOG_CDEDITMODEL, DIALOG_STYLE_INPUT, "Concesionario:", " * Elige el nuevo modelo (id):", "Editar", "Atrás");
+	        }
+	        else if(listitem == 1) // Edit Cost
+			{
+	             ShowPlayerDialog(playerid, DIALOG_CDEDITCOST, DIALOG_STYLE_INPUT, "Concesionario:",  " * Elige el nuevo precio del coche:", "Editar", "Atrás");
+	        }
+	        else if(listitem == 2) // Edit Park
+			{
+				 PutPlayerInVehicle(playerid, CDSInfo[GetPVarInt(playerid, "editingcd")][cdVehicleId][GetPVarInt(playerid, "editingcdveh")], 0);
+	             SendClientMessage(playerid, Color_Blanco, " Por favor, ponte donde quieres aparcar el vehículo.");
+				 SendClientMessage(playerid, Color_Blanco, " Una vez listo, presiona el botón FIRE - DISPARAR (CLICK).");
+				 SetPVarInt(playerid, "editingcdvehpos", 1);
+	        }
+	        else if(listitem == 3) // Delete Vehicle
+			{
+	             format(string, sizeof(string), "¿Seguro que quieres eliminar este %s?\nNota: No recibirás ningún tipo de dinero.",
+				 GetVehicleName(CDSInfo[GetPVarInt(playerid, "editingcd")][cdVehicleId][GetPVarInt(playerid, "editingcdveh")]));
+		         ShowPlayerDialog(playerid,DIALOG_CDDELVEH,DIALOG_STYLE_MSGBOX,"Advertencia:",string,"Ok","Cancel");
+	        }
+		}
+		else
+		{
+            SavecDealership(GetPVarInt(playerid, "editingcd"));
+            SetPVarInt(playerid, "editingcdveh", -1);
+		}
+	}
+	case DIALOG_CDRADIUS:
+	{ // Concesionario dialog
+		new string [250];
+		if(response && GetPVarInt(playerid, "editingcd") != -1)
+		{
+			new d;
+			d = GetPVarInt(playerid, "editingcd");
+			new Float:radius = floatstr(inputtext);
+			new Float:radiusex = CDSInfo[d][cdRadius];
+			new test = floatround(radius), test1 = floatround(radiusex);
+            if (CDSInfo[d][cdRadius] > radius)
+	        {
+				 new cost = ( test - test1 ) * ( test1 * 1000 );
+				 if(GetPVarInt(playerid, "Cash") < cost)
+				 {
+                     format(string, sizeof(string), "ERROR: No tienes suficiente dinero de esta mejora ($%d).",cost);
+                     SendClientMessage(playerid, Color_Blanco, string);
+                     return 1;
+				 }
+				 format(string, sizeof(string), " Concesionario: Radio actualizado desde %.1f a %.1f por $%d.",radiusex, radius, cost);
+                 SendClientMessage(playerid, Color_Blanco, string);
+	             CDSInfo[d][cdRadius] = radius;
+        		 format(string, sizeof(string),"Concesionario (%d) %s\nDueño: %s", d, CDSInfo[d][cdMessage], CDSInfo[d][cdOwner]);
+	             UpdateDynamic3DTextLabelText(CDSInfo[d][cdTextLabel], Color_Azul, string);
+	             new listitems[] = "1 Spawn de Vehiculo\n2 Radio\n3 Nombre del Concesionario\n4 Precio";
+			     ShowPlayerDialog(playerid,DIALOG_CDUPGRADE,DIALOG_STYLE_LIST,"Elige y continúa", listitems,"Ok","Cancelar");
+			     SavecDealership(GetPVarInt(playerid, "editingcd"));
+	        }
+		}
+		else
+		{
+		    new listitems[] = "1 Spawn de Vehiculo\n2 Radio\n3 Nombre del Concesionario";
+			ShowPlayerDialog(playerid,DIALOG_CDUPGRADE,DIALOG_STYLE_LIST,"Elige y continúa", listitems,"Ok","Cancelar");
+		}
+	}
+	case DIALOG_CDNAME:
+	{ // Concesionario dialog
+		new string[250];
+		if(response && GetPVarInt(playerid, "editingcd") != -1)
+		{
+			new d;
+			d = GetPVarInt(playerid, "editingcd");
+            if (!strlen(inputtext))
+			{
+			    SendClientMessage(playerid, Color_Azul, "** Debes escribir un nombre **");
+    	        ShowPlayerDialog(playerid, DIALOG_CDNAME, DIALOG_STYLE_INPUT, "Concesionario:", " Elige el nuevo nombre:", "Editar", "Atrás");
+		        return 1;
+			}
+			new cost = strlen(inputtext) * 50;
+			format(string, sizeof(string), " Nombre del Concesionario fue mejorado de %s a %s por $%d.", CDSInfo[d][cdMessage], inputtext, cost);
+            SendClientMessage(playerid, Color_Blanco, string);
+	        strmid(CDSInfo[d][cdMessage], inputtext, 0, strlen(inputtext), 255);
+	        format(string, 128,"Concesionario (%d) %s\nDueño: %s", d, CDSInfo[d][cdMessage], CDSInfo[d][cdOwner]);
+	        UpdateDynamic3DTextLabelText(CDSInfo[d][cdTextLabel], Color_Azul, string);
+	        new listitems[] = "1 Spawn de Vehiculo\n2 Radio\n3 Nombre del Concesionario";
+			ShowPlayerDialog(playerid,DIALOG_CDUPGRADE,DIALOG_STYLE_LIST,"Elige y continúa", listitems,"Ok","Cancelar");
+			SavecDealership(GetPVarInt(playerid, "editingcd"));
+		}
+		else
+		{
+		    new listitems[] = "1 Spawn de Vehiculo\n2 Radio\n3 Nombre del Concesionario";
+			ShowPlayerDialog(playerid,DIALOG_CDUPGRADE,DIALOG_STYLE_LIST,"Elige y continúa", listitems,"Ok","Cancelar");
+		}
+	}
+	case DIALOG_CDEDITPARK:
+	{ // Concesionario dialog
+		if(response && GetPVarInt(playerid, "editingcd") != -1 && GetPVarInt(playerid, "editingcdveh") != -1 &&  GetPVarInt(playerid, "editingcdvehpos") == 1 || GetPVarInt(playerid, "editingcdvehnew"))
+		{
+			new Float: x, Float: y, Float: z, Float: a;
+			new d, v, text_info[128];
+			d = GetPVarInt(playerid, "editingcd");
+			v = GetPVarInt(playerid, "editingcdveh");
+			GetVehiclePos(CDSInfo[d][cdVehicleId][v], x, y, z);
+	        GetVehicleZAngle(CDSInfo[d][cdVehicleId][v], a);
+			if(IsPlayerInRangeOfPoint(playerid, CDSInfo[d][cdRadius], CDSInfo[d][cdEntranceX], CDSInfo[d][cdEntranceY], CDSInfo[d][cdEntranceZ]))
+		    {
+			     CDSInfo[d][cdVehicleSpawnX][v] = x;
+                 CDSInfo[d][cdVehicleSpawnY][v] = y;
+                 CDSInfo[d][cdVehicleSpawnZ][v] = z;
+                 CDSInfo[d][cdVehicleSpawnAngle][v] = a;
+                 SetPVarInt(playerid, "editingcdvehpos", 0);
+                 SetPVarInt(playerid, "editingcdvehnew", 0);
+                 DestroyDynamic3DTextLabel(CDSInfo[d][cdVehicleLabel][v]);
+	             DestroyVehicle(CDSInfo[d][cdVehicleId][v]);
+	             new carcreated;
+	             carcreated = CreateVehicle(CDSInfo[d][cdVehicleModel][v], CDSInfo[d][cdVehicleSpawnX][v], CDSInfo[d][cdVehicleSpawnY][v], CDSInfo[d][cdVehicleSpawnZ][v], CDSInfo[d][cdVehicleSpawnAngle][v], 0, 0, 6);
+		         format(text_info, sizeof(text_info), "%s En Venta | Precio: %d", GetVehicleName(carcreated), CDSInfo[d][cdVehicleCost][v]);
+                 CDSInfo[d][cdVehicleLabel][v] = CreateDynamic3DTextLabel(text_info,Color_Blanco,0.0, 0.0, 0.0,8.0,INVALID_PLAYER_ID,carcreated);
+	             CDSInfo[d][cdVehicleId][v] = carcreated;
+	             TogglePlayerControllable(playerid, true);
+	             new listitems[] = "1 Editar Modelo\n2 Editar Costo\n3 Editar Park\n4 Borrar Vehiculo";
+			     ShowPlayerDialog(playerid,DIALOG_CDEDITONE,DIALOG_STYLE_LIST,"Concesionario:", listitems,"Ok","Cancelar");
+			     SavecDealership(d);
+			}
+			else
+			{
+                 SendClientMessage(playerid, Color_Blanco, "ERROR: Estás fuera del radio de este Concesionario, por favor vuelve a intentarlo.");
+                 TogglePlayerControllable(playerid, true);
+			}
+		}
+		else if(response && GetPVarInt(playerid, "editingcd") != -1 && GetPVarInt(playerid, "editingcdvehpos") == 2)
+		{
+			new Float: x, Float: y, Float: z, Float: a;
+			new d;
+			GetPlayerPos(playerid,x,y,z);
+	        GetPlayerFacingAngle(playerid, a);
+			d = GetPVarInt(playerid, "editingcd");
+			if(IsPlayerInRangeOfPoint(playerid, CDSInfo[d][cdRadius], CDSInfo[d][cdEntranceX], CDSInfo[d][cdEntranceY], CDSInfo[d][cdEntranceZ]))
+		    {
+			     CDSInfo[d][cdVehicleSpawn][0] = x;
+                 CDSInfo[d][cdVehicleSpawn][1] = y;
+                 CDSInfo[d][cdVehicleSpawn][2] = z;
+                 CDSInfo[d][cdVehicleSpawn][3] = a;
+                 SetPVarInt(playerid, "editingcdvehpos", 0);
+	             TogglePlayerControllable(playerid, true);
+	             new listitems[] = "1 Spawn de Vehiculo\n2 Radio\n3 Nombre del Concesionario";
+			     ShowPlayerDialog(playerid,DIALOG_CDUPGRADE,DIALOG_STYLE_LIST,"Elige para continuar", listitems,"Ok","Cancelar");
+			     SavecDealership(d);
+			}
+			else
+			{
+                 SendClientMessage(playerid, Color_Blanco, "ERROR: Estás fuera del radio de este Concesionario, por favor vuelve a intentarlo.");
+                 TogglePlayerControllable(playerid, true);
+			}
+		}
+		else if(!response && GetPVarInt(playerid, "editingcd") != -1 && GetPVarInt(playerid, "editingcdvehpos") == 1)
+		{
+            new listitems[] = "1 Editar Modelo\n2 Editar Costo\n3 Editar Park\n4 Borrar Vehiculo";
+			ShowPlayerDialog(playerid,DIALOG_CDEDITONE,DIALOG_STYLE_LIST,"Concesionario:", listitems,"Ok","Cancelar");
+			TogglePlayerControllable(playerid, true);
+			SetPVarInt(playerid, "editingcdvehpos", 0);
+		}
+		else if(!response && GetPVarInt(playerid, "editingcd") != -1 && GetPVarInt(playerid, "editingcdvehpos") == 2)
+		{
+            new listitems[] = "1 Spawn de Vehiculo\n2 Radio\n3 Nombre del Concesionario";
+		    ShowPlayerDialog(playerid,DIALOG_CDUPGRADE,DIALOG_STYLE_LIST,"Elige para continuar", listitems,"Ok","Cancelar");
+			TogglePlayerControllable(playerid, true);
+			SetPVarInt(playerid, "editingcdvehpos", 0);
+		}
+	}
+   case DIALOG_CDEDITMODEL:
+	{ // Concesionario dialog
+		if(response && GetPVarInt(playerid, "editingcd") != -1 && GetPVarInt(playerid, "editingcdveh") != -1)
+		{
+			new modelid, d, v;
+			new text_info[128];
+			d = GetPVarInt(playerid, "editingcd");
+			v = GetPVarInt(playerid, "editingcdveh");
+            if (isnumeric(inputtext))
+	        {
+	             modelid = strval(inputtext);
+	             if(modelid < 400 || modelid > 611) { SendClientMessage(playerid, Color_Blanco, "   ID´s: No puede ser menos de 400 o mayor 611 !"); return 1; }
+	             CDSInfo[d][cdVehicleModel][v] = modelid;
+	             DestroyDynamic3DTextLabel(CDSInfo[d][cdVehicleLabel][v]);
+	             DestroyVehicle(CDSInfo[d][cdVehicleId][v]);
+	             new carcreated;
+	             carcreated = CreateVehicle(CDSInfo[d][cdVehicleModel][v], CDSInfo[d][cdVehicleSpawnX][v], CDSInfo[d][cdVehicleSpawnY][v], CDSInfo[d][cdVehicleSpawnZ][v], CDSInfo[d][cdVehicleSpawnAngle][v], 0, 0, 6);
+		         format(text_info, sizeof(text_info),"%s En Venta | Precio: %d", GetVehicleName(carcreated), CDSInfo[d][cdVehicleCost][v]);
+                 CDSInfo[d][cdVehicleLabel][v] = CreateDynamic3DTextLabel(text_info,Color_Blanco,0.0, 0.0, 0.0,8.0,INVALID_PLAYER_ID,carcreated);
+	             CDSInfo[d][cdVehicleId][v] = carcreated;
+	             new listitems[] = "1 Editar Modelo\n2 Editar Costo\n3 Editar Park\n4 Borrar Vehiculo";
+			     ShowPlayerDialog(playerid,DIALOG_CDEDITONE,DIALOG_STYLE_LIST,"Concesionario:", listitems,"Ok","Cancelar");
+			     SavecDealership(d);
+	        }
+		}
+		else
+		{
+		    new listitems[] = "1 Editar Modelo\n2 Editar Costo\n3 Editar Park\n4 Borrar Vehiculo";
+			ShowPlayerDialog(playerid,DIALOG_CDEDITONE,DIALOG_STYLE_LIST,"Concesionario:", listitems,"Ok","Cancelar");
+		}
+	}
+	case DIALOG_CDEDITCOST:
+	{ // Concesionario dialog
+		if(response && GetPVarInt(playerid, "editingcd") != -1 && GetPVarInt(playerid, "editingcdveh") != -1)
+		{
+			new price, d, v;
+			new text_info[128];
+			d = GetPVarInt(playerid, "editingcd");
+			v = GetPVarInt(playerid, "editingcdveh");
+            if (isnumeric(inputtext))
+	        {
+	             price = strval(inputtext);
+	             CDSInfo[d][cdVehicleCost][v] = price;
+	             format(text_info, sizeof(text_info), "%s En Venta | Precio: %d", GetVehicleName(CDSInfo[d][cdVehicleId][v]), CDSInfo[d][cdVehicleCost][v]);
+	             UpdateDynamic3DTextLabelText(CDSInfo[d][cdVehicleLabel][v], Color_Blanco, text_info);
+	             new listitems[] = "1 Editar Modelo\n2 Editar Costo\n3 Editar Park\n4 Borrar Vehiculo";
+			     ShowPlayerDialog(playerid,DIALOG_CDEDITONE,DIALOG_STYLE_LIST,"Concesionario:", listitems,"Ok","Cancelar");
+			     SavecDealership(d);
+	        }
+		}
+		else
+		{
+		    new listitems[] = "1 Editar Modelo\n2 Editar Costo\n3 Editar Park\n4 Borrar Vehiculo";
+			ShowPlayerDialog(playerid,DIALOG_CDEDITONE,DIALOG_STYLE_LIST,"Concesionario:", listitems,"Ok","Cancelar");
+		}
+	}
+	case DIALOG_CDDELVEH:
+	{ // Concesionario dialog
+		if(response && GetPVarInt(playerid, "editingcd") != -1 && GetPVarInt(playerid, "editingcdveh") != -1)
+		{
+			DestroyCarDealershipVehicle(GetPVarInt(playerid, "editingcd"), GetPVarInt(playerid, "editingcdveh"));
+			SavecDealership(GetPVarInt(playerid, "editingcd"));
+		}
+		else
+		{
+  			new listitems[] = "1 Editar Modelo\n2 Editar Costo\n3 Editar Park\n4 Borrar Vehiculo";
+			ShowPlayerDialog(playerid,DIALOG_CDEDITONE,DIALOG_STYLE_LIST,"Concesionario:", listitems,"Ok","Cancelar");
+		}
+	}
+	case MPSPAYTICKETS:
+	{
+	    if(response)
+	    {
+			new
+				szMessage[128];
+
+			if(Info[playerid][pBuq] != 0)
+			{
+				format(szMessage, sizeof(szMessage), "%s intenta pagar multas y es buscado por la policía - Nivel de búsqueda: %i.", NombreP(playerid), Info[playerid][pBuq]);
+				SendRadioMessage(1, TEAM_RADIO_COLOR, szMessage);
+				SendRadioMessage(2, TEAM_RADIO_COLOR, szMessage);
+				return SendClientMessage(playerid, Color_Azul, "La policía ha dado comunicado que usted está buscado, y están en camino.");
+			}
+			if(PlayerVehicleInfo[playerid][listitem][pvTicket])
+			{
+				if(GetPlayerCash(playerid) < PlayerVehicleInfo[playerid][listitem][pvTicket])
+				{
+					return SendClientMessage(playerid, Color_Blanco, "No tienes suficiente dinero para pagar la multa.");
+				}
+				DarDinero(playerid, -PlayerVehicleInfo[playerid][listitem][pvTicket]);
+				Tax += PlayerVehicleInfo[playerid][listitem][pvTicket];
+				format(szMessage, sizeof(szMessage), "Pagaste la multa de $%d de tu %s.", PlayerVehicleInfo[playerid][listitem][pvTicket], VehicleName[PlayerVehicleInfo[playerid][listitem][pvModelId] - 400]);
+				SendClientMessage(playerid, Color_Blanco, szMessage);
+				PlayerVehicleInfo[playerid][listitem][pvTicket] = 0;
+			}
+			else if(PlayerVehicleInfo[playerid][listitem][pvImpounded])
+			{
+
+				new
+					iCost = (PlayerVehicleInfo[playerid][listitem][pvPrice] / 20) + PlayerVehicleInfo[playerid][listitem][pvTicket] + (Info[playerid][pLevel] * 2);
+
+				if(GetPlayerCash(playerid) < iCost)
+				{
+					return SendClientMessage(playerid, Color_Blanco, "No tienes suficiente dinero para pagar la multa.");
+				}
+
+				format(szMessage, sizeof(szMessage), "Liberaste tu %s por $%i.", VehicleName[PlayerVehicleInfo[playerid][listitem][pvModelId] - 400], iCost);
+				SendClientMessage(playerid, Color_Azul, szMessage);
+				SendClientMessage(playerid, Color_Blanco, "Tu auto se encuentra en el depósito municipal, puedes abrir la reja usando /deposito.");
+				DarDinero(playerid, -iCost);
+				Tax += iCost;
+				PlayerVehicleInfo[playerid][listitem][pvImpounded] = 0;
+				PlayerVehicleInfo[playerid][listitem][pvPosX] = 1655.4379;
+				PlayerVehicleInfo[playerid][listitem][pvPosY] = -1829.5668;
+				PlayerVehicleInfo[playerid][listitem][pvPosZ] = 13.2677;
+				PlayerVehicleInfo[playerid][listitem][pvPosAngle] = 91.6165;
+				PlayerVehicleInfo[playerid][listitem][pvTicket] = 0;
+				PlayerVehicleInfo[playerid][listitem][pvVW] = 0;
+                ++PlayerCars;
+				PlayerVehicleInfo[playerid][listitem][pvId] = CreateVehicle(PlayerVehicleInfo[playerid][listitem][pvModelId], PlayerVehicleInfo[playerid][listitem][pvPosX], PlayerVehicleInfo[playerid][listitem][pvPosY], PlayerVehicleInfo[playerid][listitem][pvPosZ], PlayerVehicleInfo[playerid][listitem][pvPosAngle],PlayerVehicleInfo[playerid][listitem][pvColor1], PlayerVehicleInfo[playerid][listitem][pvColor2], -1);
+				SetPlayerVirtualWorld(PlayerVehicleInfo[playerid][listitem][pvId], PlayerVehicleInfo[playerid][listitem][pvVW]);
+				VehicleFuel[PlayerVehicleInfo[playerid][listitem][pvId]] = PlayerVehicleInfo[playerid][listitem][pvFuel];
+				if(PlayerVehicleInfo[playerid][listitem][pvLocked] == 1) LockPlayerVehicle(playerid, PlayerVehicleInfo[playerid][listitem][pvId], PlayerVehicleInfo[playerid][listitem][pvLock]);
+				LoadPlayerVehicleMods(playerid, listitem);
+			}
+			else SendClientMessage(playerid, Color_Blanco, "Este coche, o bien no existe, o no es necesario liberar o tiene sus multas pagadas.");
+	    }
+		return 1;
+	}
+			case GIVEKEYS:
+		{
+			new string[250];
+		    if(response)
+		    {
+				if(PlayerVehicleInfo[playerid][listitem][pvId] == INVALID_PLAYER_VEHICLE_ID)
+				{
+		            SendClientMessage(playerid, Color_Blanco, "No se puede dar las llaves de un vehículo que no existe o que está embargado.");
+		            GiveKeysTo[playerid] = INVALID_PLAYER_ID;
+		            return 1;
+				}
+		        if(PlayerVehicleInfo[playerid][listitem][pvAllowedPlayerId] != INVALID_PLAYER_ID)
+		        {
+		            SendClientMessage(playerid, Color_Blanco, "Usted ya ha dado a alguien las llaves de este coche.");
+		            GiveKeysTo[playerid] = INVALID_PLAYER_ID;
+		            return 1;
+		        }
+		        if(Info[GiveKeysTo[playerid]][pLlavesDeVeh] != INVALID_PLAYER_ID)
+		        {
+		            SendClientMessage(playerid, Color_Blanco, "Ese jugador ya tiene las llaves de un coche distinto.");
+		            GiveKeysTo[playerid] = INVALID_PLAYER_ID;
+		            return 1;
+		        }
+				PlayerVehicleInfo[playerid][listitem][pvAllowedPlayerId] = GiveKeysTo[playerid];
+				Info[GiveKeysTo[playerid]][pVehLlaves] = listitem;
+				Info[GiveKeysTo[playerid]][pLlavesDeVeh] = playerid;
+				format(string, sizeof(string), "%s te ha dado las llaves de su %s.", NombreP(playerid), GetVehicleName(PlayerVehicleInfo[playerid][listitem][pvId]));
+				SendClientMessage(GiveKeysTo[playerid], Color_Blanco, string);
+				format(string, sizeof(string), "Has dado a %s las llaves de tu %s.", NombreP(GiveKeysTo[playerid]), GetVehicleName(PlayerVehicleInfo[playerid][listitem][pvId]));
+				SendClientMessage(playerid, Color_Blanco, string);
+				GiveKeysTo[playerid] = INVALID_PLAYER_ID;
+		    }
+		}
+		case REMOVEKEYS:
+		{
+			new string[250];
+		    if(response)
+		    {
+		        if(PlayerVehicleInfo[playerid][listitem][pvId] == INVALID_PLAYER_VEHICLE_ID) {
+		            SendClientMessage(playerid, Color_Blanco, "No se puede quitar las llaves de un vehículo que no existe o que estánembargados.");
+		            return 1;
+				}
+		        if(PlayerVehicleInfo[playerid][listitem][pvAllowedPlayerId] != PlayerVehicleInfo[playerid][listitem][pvAllowedPlayerId])
+		        {
+		            SendClientMessage(playerid, Color_Blanco, "Este jugador no tiene las llaves de este coche.");
+		            return 1;
+		        }
+		        if(PlayerVehicleInfo[playerid][listitem][pvAllowedPlayerId] == INVALID_PLAYER_ID)
+		        {
+		            SendClientMessage(playerid, Color_Blanco, "Usted no ha dado a nadie las llaves de este coche.");
+		            return 1;
+		        }
+				Info[PlayerVehicleInfo[playerid][listitem][pvAllowedPlayerId]][pVehLlaves] = INVALID_PLAYER_VEHICLE_ID;
+				Info[PlayerVehicleInfo[playerid][listitem][pvAllowedPlayerId]][pLlavesDeVeh] = INVALID_PLAYER_ID;
+				format(string, sizeof(string), "%s ha tomado las llaves de su %s.", NombreP(playerid), GetVehicleName(PlayerVehicleInfo[playerid][listitem][pvId]));
+				SendClientMessage(PlayerVehicleInfo[playerid][listitem][pvAllowedPlayerId], Color_Blanco, string);
+				format(string, sizeof(string), "Tomaste las llaves de tu %s de %s.", GetVehicleName(PlayerVehicleInfo[playerid][listitem][pvId]),NombreP(PlayerVehicleInfo[playerid][listitem][pvAllowedPlayerId]));
+				SendClientMessage(playerid, Color_Blanco, string);
+				PlayerVehicleInfo[playerid][listitem][pvAllowedPlayerId] = INVALID_PLAYER_ID;
+		    }
+		}
+		   	case CARSPAWN:
+    	{
+        	if (response == 1)
+        	{
+        		if(PlayerVehicleInfo[playerid][listitem][pvImpounded] == 1) return SendClientMessage(playerid,Color_Blanco,"El auto que intenta spawnear está embargado.");
+		    	if(PlayerVehicleInfo[playerid][listitem][pvImpounded] >= 2) PlayerVehicleInfo[playerid][listitem][pvImpounded] = 0;
+	        	if(PlayerVehicleInfo[playerid][listitem][pvModelId] != 0 && PlayerVehicleInfo[playerid][listitem][pvImpounded] == 0 && PlayerVehicleInfo[playerid][listitem][pvSpawned]== 0)
+	        	{
+	        	    if(carsforplayer[playerid] == 6) return SendClientMessage(playerid,Color_Blanco,"* Sólo puedes tener 6 coches spawneados y 2 guardados.");
+	            	PlayerCars++;
+	            	carsforplayer[playerid]++;
+					new carcreated = CreateVehicle(PlayerVehicleInfo[playerid][listitem][pvModelId], PlayerVehicleInfo[playerid][listitem][pvPosX], PlayerVehicleInfo[playerid][listitem][pvPosY], PlayerVehicleInfo[playerid][listitem][pvPosZ], PlayerVehicleInfo[playerid][listitem][pvPosAngle],PlayerVehicleInfo[playerid][listitem][pvColor1], PlayerVehicleInfo[playerid][listitem][pvColor2], -1);
+					PlayerVehicleInfo[playerid][listitem][pvId] = carcreated;
+					VehicleFuel[carcreated] = PlayerVehicleInfo[playerid][listitem][pvFuel];
+					SetVehicleHealth(carcreated, PlayerVehicleInfo[playerid][listitem][pvHealth]);
+					SetVehicleVirtualWorld(carcreated, PlayerVehicleInfo[playerid][listitem][pvVW]);
+					PlayerVehicleInfo[playerid][listitem][pvSpawned] = 1;
+					SendClientMessage(playerid,Color_Blanco,"Vehiculo spawneado correctamente, en la última posición que lo estacionaste");
+					if(PlayerVehicleInfo[playerid][listitem][pvLocked] == 1)
+					LockPlayerVehicle(playerid, PlayerVehicleInfo[playerid][listitem][pvId], PlayerVehicleInfo[playerid][listitem][pvLock]);
+                    LoadPlayerVehicleMods(playerid, listitem);
+					return 1;
+
+				}
+	        	else if(PlayerVehicleInfo[playerid][listitem][pvSpawned] == 1)
+	        	{
+				    new playername[MAX_PLAYER_NAME];
+					GetPlayerName(playerid, playername, sizeof(playername));
+					//printf(" Unloading %s's vehicles.", playername);
+         			new Float:health;
+            		GetVehicleHealth(PlayerVehicleInfo[playerid][listitem][pvId], health);
+            		if(health < 500) return SendClientMessage(playerid, Color_Blanco, " El vehiculo está muy dañado para ser guardado.");
+                    if(IsVehicleBusy(PlayerVehicleInfo[playerid][listitem][pvId])) return SendClientMessage(playerid, Color_Blanco, " El vehiculo está ocupado por otra persona y no puede ser guardado.");
+					if(PlayerVehicleInfo[playerid][listitem][pvImpounded] >= 2) PlayerVehicleInfo[playerid][listitem][pvImpounded] = 0;
+					if(PlayerVehicleInfo[playerid][listitem][pvId] != INVALID_PLAYER_VEHICLE_ID && PlayerVehicleInfo[playerid][listitem][pvImpounded] == 0 && PlayerVehicleInfo[playerid][listitem][pvSpawned]== 1)
+					{
+		            	PlayerCars--;
+		            	carsforplayer[playerid]--;
+            			if(LockStatus[PlayerVehicleInfo[playerid][listitem][pvId]] != 0) LockStatus[PlayerVehicleInfo[playerid][listitem][pvId]] = 0;
+           		 		UpdatePlayerVehicleMods(playerid, listitem);
+						DestroyVehicle(PlayerVehicleInfo[playerid][listitem][pvId]);
+						VehicleFuel[PlayerVehicleInfo[playerid][listitem][pvId]] = 1000;
+						PlayerVehicleInfo[playerid][listitem][pvId] = INVALID_PLAYER_VEHICLE_ID;
+						PlayerVehicleInfo[playerid][listitem][pvSpawned] = 0;
+						SendClientMessage(playerid,Color_Blanco,"Vehiculo fue guardado correctamente.");
+						if(PlayerVehicleInfo[playerid][listitem][pvAllowedPlayerId] != INVALID_PLAYER_ID)
+	    				{
+	    	    			Info[PlayerVehicleInfo[playerid][listitem][pvAllowedPlayerId]][pVehLlaves] = INVALID_PLAYER_VEHICLE_ID;
+	    	    			Info[PlayerVehicleInfo[playerid][listitem][pvAllowedPlayerId]][pLlavesDeVeh] = INVALID_PLAYER_ID;
+	    					PlayerVehicleInfo[playerid][listitem][pvAllowedPlayerId] = INVALID_PLAYER_ID;
+	    			}
+	            }
+			}
+	    }
+	}

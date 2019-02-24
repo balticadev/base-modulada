@@ -1,0 +1,78 @@
+	Textdraw0 = TextDrawCreate(639.000000, 134.000000, "_");
+	TextDrawBackgroundColor(Textdraw0, 255);
+	TextDrawFont(Textdraw0, 1);
+	TextDrawLetterSize(Textdraw0, 0.500000, 21.600002);
+	TextDrawColor(Textdraw0, -1);
+	TextDrawSetOutline(Textdraw0, 0);
+	TextDrawSetProportional(Textdraw0, 1);
+	TextDrawSetShadow(Textdraw0, 1);
+	TextDrawUseBox(Textdraw0, 1);
+	TextDrawBoxColor(Textdraw0, 47);
+	TextDrawTextSize(Textdraw0, 0.000000, 0.000000);
+	TextDrawSetSelectable(Textdraw0, 0);
+
+	Textdraw1 = TextDrawCreate(256.000000, 128.000000, "RB:RP");
+	TextDrawBackgroundColor(Textdraw1, 255);
+	TextDrawFont(Textdraw1, 2);
+	TextDrawLetterSize(Textdraw1, 0.800000, 3.000000);
+	TextDrawColor(Textdraw1, -1);
+	TextDrawSetOutline(Textdraw1, 0);
+	TextDrawSetProportional(Textdraw1, 1);
+	TextDrawSetShadow(Textdraw1, 1);
+	TextDrawSetSelectable(Textdraw1, 0);
+
+	Textdraw2 = TextDrawCreate(95.000000, 181.000000, "RolePlay");
+	TextDrawBackgroundColor(Textdraw2, 255);
+	TextDrawFont(Textdraw2, 1);
+	TextDrawLetterSize(Textdraw2, 0.800000, 3.000000);
+	TextDrawColor(Textdraw2, -1);
+	TextDrawSetOutline(Textdraw2, 0);
+	TextDrawSetProportional(Textdraw2, 1);
+	TextDrawSetShadow(Textdraw2, 1);
+	TextDrawSetSelectable(Textdraw2, 0);
+
+	Textdraw3 = TextDrawCreate(427.000000, 182.000000, "Base");
+	TextDrawBackgroundColor(Textdraw3, 255);
+	TextDrawFont(Textdraw3, 1);
+	TextDrawLetterSize(Textdraw3, 0.800000, 3.000000);
+	TextDrawColor(Textdraw3, -1);
+	TextDrawSetOutline(Textdraw3, 0);
+	TextDrawSetProportional(Textdraw3, 1);
+	TextDrawSetShadow(Textdraw3, 1);
+	TextDrawSetSelectable(Textdraw3, 0);
+
+	Textdraw4 = TextDrawCreate(185.000000, 295.000000, "TS3: 92.222.87.45");
+	TextDrawBackgroundColor(Textdraw4, 255);
+	TextDrawFont(Textdraw4, 2);
+	TextDrawLetterSize(Textdraw4, 0.800000, 3.000000);
+	TextDrawColor(Textdraw4, -1);
+	TextDrawSetOutline(Textdraw4, 0);
+	TextDrawSetProportional(Textdraw4, 1);
+	TextDrawSetShadow(Textdraw4, 1);
+	TextDrawSetSelectable(Textdraw4, 0);
+
+	Textdraw5 = TextDrawCreate(3.000000, 134.000000, "_");
+	TextDrawBackgroundColor(Textdraw5, 255);
+	TextDrawFont(Textdraw5, 1);
+	TextDrawLetterSize(Textdraw5, 0.500000, 21.500005);
+	TextDrawColor(Textdraw5, -1);
+	TextDrawSetOutline(Textdraw5, 0);
+	TextDrawSetProportional(Textdraw5, 1);
+	TextDrawSetShadow(Textdraw5, 1);
+	TextDrawUseBox(Textdraw5, 1);
+	TextDrawBoxColor(Textdraw5, 16711935);
+	TextDrawTextSize(Textdraw5, 0.000000, 0.000000);
+	TextDrawSetSelectable(Textdraw5, 0);
+
+	Textdraw6 = TextDrawCreate(673.000000, 134.000000, "_");
+	TextDrawBackgroundColor(Textdraw6, 255);
+	TextDrawFont(Textdraw6, 1);
+	TextDrawLetterSize(Textdraw6, 0.500000, 21.500005);
+	TextDrawColor(Textdraw6, -1);
+	TextDrawSetOutline(Textdraw6, 0);
+	TextDrawSetProportional(Textdraw6, 1);
+	TextDrawSetShadow(Textdraw6, 1);
+	TextDrawUseBox(Textdraw6, 1);
+	TextDrawBoxColor(Textdraw6, 16711935);
+	TextDrawTextSize(Textdraw6, 631.000000, 0.000000);
+	TextDrawSetSelectable(Textdraw6, 0);
